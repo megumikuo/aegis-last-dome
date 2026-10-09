@@ -904,9 +904,9 @@ function mstep(s, t) {
 }
 // Soundtrack: a "ready" loop on the title and hangar, the main loop in play, and a tense mix for
 // boss waves and the late game. Plain <audio> elements, so it also plays when opened from file://.
-// Boss waves and the late game play boss.mp3. If it cannot load, the tense mix falls back to the
-// main loop sped up with a pounding pulse underneath.
-const TRACKS = { ready: 'ready.mp3', main: 'music.mp3', boss: 'boss.mp3' };
+// Boss waves play boss.mp3; from INTENSE_FROM on, every wave plays boss2.mp3. A missing track falls
+// back to the other boss track, then to the main loop sped up with a pounding pulse underneath.
+const TRACKS = { ready: 'ready.mp3', main: 'music.mp3', boss: 'boss.mp3', boss2: 'boss2.mp3' };
 const INTENSE_FROM = 10;                         // from this wave on, every wave gets the tense mix
 const TENSE_RATE = 1.12;
 const MU = { els: {}, ok: {}, mode: null, cur: null, fade: null, beat: null, beatNext: 0 };
@@ -919,11 +919,12 @@ for (const k in TRACKS) {
 }
 function wantMode() {
   if (S.state === 'title' || S.state === 'over') return 'ready';
-  if (S.state === 'play' || S.state === 'dying') return (S.wave % 5 === 0 || S.wave >= INTENSE_FROM) ? 'boss' : 'main';
+  if (S.state === 'play' || S.state === 'dying') return S.wave >= INTENSE_FROM ? 'late' : S.wave % 5 === 0 ? 'boss' : 'main';
   return null;
 }
 function pickTrack(mode) {                       // which element plays a mode, and at what speed
-  if (mode === 'boss') return MU.ok.boss ? ['boss', 1] : MU.ok.main !== false ? ['main', TENSE_RATE] : [null, 1];
+  if (mode === 'late' && MU.ok.boss2) return ['boss2', 1];
+  if (mode === 'boss' || mode === 'late') return MU.ok.boss ? ['boss', 1] : MU.ok.boss2 ? ['boss2', 1] : MU.ok.main !== false ? ['main', TENSE_RATE] : [null, 1];
   if (mode === 'ready') return MU.ok.ready !== false ? ['ready', 1] : [null, 1];
   return MU.ok.main !== false ? ['main', 1] : [null, 1];
 }
@@ -932,10 +933,10 @@ function musicMode(mode, force) {
   if (!force && mode === MU.mode && AU.playing) return;
   MU.mode = mode;
   const [key, rate] = mode && AU.musOn ? pickTrack(mode) : [null, 1];
-  const tense = mode === 'boss' && key === 'main';
+  const tense = (mode === 'boss' || mode === 'late') && key === 'main';
   if (key !== MU.cur) {
     const old = MU.cur && MU.els[MU.cur];
-    if (key) { const el = MU.els[key]; if ((key === 'main' && mode === 'main') || key === 'boss') el.currentTime = 0; setRate(el, rate); el.play().catch(() => {}); }
+    if (key) { const el = MU.els[key]; if ((key === 'main' && mode === 'main') || key === 'boss' || key === 'boss2') el.currentTime = 0; setRate(el, rate); el.play().catch(() => {}); }
     MU.cur = key; fadeTo(old, key && MU.els[key]);
   } else if (key) { setRate(MU.els[key], rate); if (MU.els[key].paused) MU.els[key].play().catch(() => {}); fadeTo(null, MU.els[key]); }
   chipStop(); if (mode && AU.musOn && !key && mode !== 'ready') chipStart();
