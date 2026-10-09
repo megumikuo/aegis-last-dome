@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Games</title>
+<meta name="description" content="Small games that run in the browser, on a phone or a computer.">
+<meta name="theme-color" content="#05070D">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Games">
+<meta property="og:description" content="Small games that run in the browser, on a phone or a computer.">
+<link rel="icon" type="image/png" href="aegis-last-dome/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Press+Start+2P&display=swap">
+<style>
+/* Layout: one quiet shelf. A small wordmark, then each game as a wide card: screenshot on the left, words and PLAY on the right. */
+:root{
+  color-scheme:dark;
+  --void:#05070D; --panel:#0A0F1B; --ink:#EAF8FF; --dim:#8497B0; --line:#1A2740;
+  --glow:#66E8FA; --glow-deep:#3B82F6;
+  --font-arcade:"Press Start 2P","Courier New",ui-monospace,monospace;
+  --font-text:"Instrument Sans",-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+}
+*{box-sizing:border-box}
+html{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+body{margin:0;min-height:100vh;background:var(--void);color:var(--ink);font:400 17px/1.55 var(--font-text);-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(1px 1px at 12% 18%,#B8CCE4 50%,transparent 51%),radial-gradient(1px 1px at 78% 9%,#46587A 50%,transparent 51%),
+    radial-gradient(1px 1px at 33% 71%,#46587A 50%,transparent 51%),radial-gradient(1px 1px at 91% 58%,#B8CCE4 50%,transparent 51%),
+    radial-gradient(1px 1px at 58% 36%,#1E2A44 50%,transparent 51%),radial-gradient(1px 1px at 6% 88%,#46587A 50%,transparent 51%),
+    radial-gradient(1px 1px at 67% 83%,#1E2A44 50%,transparent 51%),radial-gradient(1px 1px at 45% 6%,#1E2A44 50%,transparent 51%)}
+.page{max-width:960px;margin:0 auto;padding-inline:20px;padding-block:28px 56px;display:flex;flex-direction:column;gap:40px;min-height:100vh}
+a{color:inherit}
+:focus-visible{outline:2px solid #FFC46B;outline-offset:3px}
+header{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+.mark{font-family:var(--font-arcade);font-size:20px;letter-spacing:.06em;margin:0;font-weight:400;text-shadow:2px 2px 0 var(--glow-deep)}
+.by{font-size:15px;color:var(--dim);text-decoration:none;border-bottom:1px solid var(--line)}
+.by:hover{color:var(--ink);border-bottom-color:var(--glow)}
+.intro{margin:-20px 0 0;color:var(--dim);max-width:46ch}
+.game{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:36px;align-items:center}
+.poster{display:block;border:2px solid var(--line);background:var(--panel);line-height:0;aspect-ratio:9/16;overflow:hidden}
+.poster img{width:100%;height:100%;object-fit:cover;display:block}
+.poster:hover{border-color:var(--glow)}
+.info{display:flex;flex-direction:column;gap:18px;align-items:flex-start;min-width:0}
+h2{font-family:var(--font-arcade);font-weight:400;font-size:clamp(20px,3.2vw,30px);line-height:1.35;margin:0;text-wrap:balance}
+h2 small{display:block;font-size:.5em;letter-spacing:.3em;color:var(--glow);margin-top:10px}
+.pitch{margin:0;max-width:44ch;font-size:18px}
+.facts{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 10px;font-size:14px;color:var(--dim)}
+.facts li{border:1px solid var(--line);padding:4px 10px}
+.play{font-family:var(--font-arcade);font-size:16px;color:var(--void);background:var(--glow);text-decoration:none;padding:16px 28px;box-shadow:0 4px 0 var(--glow-deep);margin-top:6px}
+.play:active{transform:translateY(4px);box-shadow:none}
+.cjk h2 small{font-family:var(--font-text);font-weight:600;font-size:.62em}
+.cjk .play{font-family:var(--font-text);font-weight:600;font-size:19px}
+footer{margin-top:auto;color:var(--dim);font-size:14px;border-top:1px solid var(--line);padding-top:16px}
+@media (max-width:680px){
+  .game{grid-template-columns:1fr;gap:22px}
+  .poster{aspect-ratio:4/5}
+  .poster img{object-position:50% 78%}
+  .play{align-self:stretch;text-align:center}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1 class="mark">GAMES</h1>
+  </header>
+  <p class="intro" id="intro">Small games that run in the browser, on a phone or a computer.</p>
+  <main>
+    <article class="game">
+      <a class="poster" href="aegis-last-dome/" tabindex="-1" aria-hidden="true"><img src="aegis-last-dome/cover.jpg" width="750" height="1334" alt=""></a>
+      <div class="info">
+        <h2>AEGIS <small id="sub">LAST DOME</small></h2>
+        <p class="pitch" id="pitch">A retro space shooter. Fly above the last energy dome and keep the city under it alive.</p>
+        <ul class="facts"><li id="f1">Phone and desktop</li><li id="f2">6 languages</li><li id="f3">Free</li></ul>
+        <a class="play" href="aegis-last-dome/" id="play">PLAY</a>
+      </div>
+    </article>
+  </main>
+</div>
+<script>
+// The shelf speaks the visitor's language; the games carry their own language menu.
+(function () {
+  var T = {
+    'zh-Hant': { intro: '打開瀏覽器就能玩的小遊戲，手機和電腦都可以。', sub: '最後的護盾', pitch: '復古太空射擊遊戲。駕駛戰機守在最後一座能量護盾上方，保住底下的城市。', f: ['手機和電腦', '6 種語言', '免費'], play: '開始玩' },
+    'zh-Hans': { intro: '打开浏览器就能玩的小游戏，手机和电脑都可以。', sub: '最后的护盾', pitch: '复古太空射击游戏。驾驶战机守在最后一座能量护盾上方，保住底下的城市。', f: ['手机和电脑', '6 种语言', '免费'], play: '开始玩' },
+    ja: { intro: 'ブラウザですぐ遊べる小さなゲーム。スマホでもパソコンでも。', sub: '最後のドーム', pitch: 'レトロなスペースシューティング。最後のエネルギードームの上を飛び、その下の都市を守り抜こう。', f: ['スマホ・PC対応', '6言語', '無料'], play: 'プレイ' },
+    ko: { intro: '브라우저에서 바로 즐기는 작은 게임. 휴대폰과 컴퓨터 모두 지원합니다.', sub: '마지막 돔', pitch: '레트로 우주 슈팅 게임. 마지막 에너지 돔 위를 날며 그 아래의 도시를 지켜 내세요.', f: ['휴대폰과 PC', '6개 언어', '무료'], play: '플레이' },
+    es: { intro: 'Juegos pequeños que funcionan en el navegador, en el móvil o en el ordenador.', sub: 'EL ÚLTIMO DOMO', pitch: 'Un shooter espacial retro. Vuela sobre el último domo de energía y mantén viva la ciudad que protege.', f: ['Móvil y ordenador', '6 idiomas', 'Gratis'], play: 'JUGAR' }
+  };
+  var pick = 'en', langs = navigator.languages || [navigator.language || 'en'];
+  for (var i = 0; i < langs.length; i++) {
+    var l = String(langs[i]).toLowerCase();
+    if (l.indexOf('zh') === 0) { pick = /hant|tw|hk|mo/.test(l) ? 'zh-Hant' : 'zh-Hans'; break; }
+    var two = l.slice(0, 2);
+    if (two === 'en') break;
+    if (T[two]) { pick = two; break; }
+  }
+  var t = T[pick]; if (!t) return;
+  document.documentElement.lang = pick;
+  if (pick !== 'es') document.body.classList.add('cjk');
+  var set = function (id, v) { document.getElementById(id).textContent = v; };
+  set('intro', t.intro); set('sub', t.sub); set('pitch', t.pitch); set('play', t.play);
+  set('f1', t.f[0]); set('f2', t.f[1]); set('f3', t.f[2]);
+})();
+</script>
+</body>
+</html>
