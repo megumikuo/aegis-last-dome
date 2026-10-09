@@ -280,7 +280,6 @@ select.btn{appearance:none;-webkit-appearance:none;border-radius:0;text-align:ce
 /* ---------- setup ---------- */
 const W = 180, GLS = 2;            // playfield width in game px; dome buffer px per game px
 // To ship a soundtrack with the page, publish the file next to it and put its relative path here.
-const MUSIC_SRC = 'music.mp3';
 let H = 320, scale = 2;
 const $ = id => document.getElementById(id);
 const app = $('app'), stage = $('stage'), layers = $('layers');
@@ -847,7 +846,6 @@ function audioInit() {
     // coarse noise, each value held for a few samples, like an old console's noise channel
     const cb = AU.crunchBuf = c.createBuffer(1, c.sampleRate, c.sampleRate), cd = cb.getChannelData(0);
     let held = 0; for (let i = 0; i < cd.length; i++) { if (i % 14 === 0) held = Math.random() * 2 - 1; cd[i] = held; }
-    if (AU.pending) { const p = AU.pending; AU.pending = null; decodeTrack(p[0], p[1]); }
   } catch { AU.ctx = null; }
 }
 function tone(type, f0, f1, dur, vol, delay = 0, dest) {
@@ -904,42 +902,71 @@ function mstep(s, t) {
   if (st % 4 === 2) noise(0.03, 0.05, 7000, 6000, d, AU.mus, 'highpass');
   if (st === 4 || st === 12) noise(0.09, 0.09, 1800, 900, d, AU.mus, 'bandpass');
 }
-function musicStart() {
-  if (!AU.musOn || AU.playing) return;
-  if (AU.el) { AU.el.play().then(() => { AU.playing = true; }).catch(() => {}); AU.playing = true; return; }
-  const c = AU.ctx; if (!c) return;
-  if (AU.buf) { const s = AU.src = c.createBufferSource(); s.buffer = AU.buf; s.loop = true; s.connect(AU.mus); s.start(); AU.playing = true; return; }
+// Soundtrack: a "ready" loop on the title and hangar, the main loop in play, and a tense mix for
+// boss waves and the late game. Plain <audio> elements, so it also plays when opened from file://.
+// Set TRACKS.boss to a file (e.g. 'boss.mp3') to give boss waves their own track; until then the
+// tense mix is the main loop sped up with a pounding pulse underneath.
+const TRACKS = { ready: 'ready.mp3', main: 'music.mp3', boss: null };
+const INTENSE_FROM = 10;                         // from this wave on, every wave gets the tense mix
+const TENSE_RATE = 1.12;
+const MU = { els: {}, ok: {}, mode: null, cur: null, fade: null, beat: null, beatNext: 0 };
+for (const k in TRACKS) {
+  if (!TRACKS[k]) continue;
+  const el = MU.els[k] = new Audio(); el.loop = true; el.preload = 'auto'; el.volume = 0;
+  el.addEventListener('canplay', () => { if (!MU.ok[k]) { MU.ok[k] = true; if (MU.mode) musicMode(MU.mode, true); } }, { once: true });
+  el.addEventListener('error', () => { MU.ok[k] = false; if (MU.mode) musicMode(MU.mode, true); }, { once: true });
+  el.src = TRACKS[k];
+}
+function wantMode() {
+  if (S.state === 'title' || S.state === 'over') return 'ready';
+  if (S.state === 'play' || S.state === 'dying') return (S.wave % 5 === 0 || S.wave >= INTENSE_FROM) ? 'boss' : 'main';
+  return null;
+}
+function pickTrack(mode) {                       // which element plays a mode, and at what speed
+  if (mode === 'boss') return MU.ok.boss ? ['boss', 1] : MU.ok.main !== false ? ['main', TENSE_RATE] : [null, 1];
+  if (mode === 'ready') return MU.ok.ready !== false ? ['ready', 1] : [null, 1];
+  return MU.ok.main !== false ? ['main', 1] : [null, 1];
+}
+function setRate(el, r) { el.playbackRate = r; el.preservesPitch = el.mozPreservesPitch = el.webkitPreservesPitch = false; }
+function musicMode(mode, force) {
+  if (!force && mode === MU.mode && AU.playing) return;
+  MU.mode = mode;
+  const [key, rate] = mode && AU.musOn ? pickTrack(mode) : [null, 1];
+  const tense = mode === 'boss' && key === 'main';
+  if (key !== MU.cur) {
+    const old = MU.cur && MU.els[MU.cur];
+    if (key) { const el = MU.els[key]; if (key === 'main' && mode === 'main' && MU.cur !== 'main') el.currentTime = 0; setRate(el, rate); el.play().catch(() => {}); }
+    MU.cur = key; fadeTo(old, key && MU.els[key]);
+  } else if (key) { setRate(MU.els[key], rate); if (MU.els[key].paused) MU.els[key].play().catch(() => {}); fadeTo(null, MU.els[key]); }
+  chipStop(); if (mode && AU.musOn && !key && mode !== 'ready') chipStart();
+  beatSet(tense && AU.musOn);
+  AU.playing = !!mode && AU.musOn;
+}
+function fadeTo(out, inn) {                      // quick crossfade between loops
+  clearInterval(MU.fade); const t0 = performance.now(), v0 = inn ? inn.volume : 0;
+  MU.fade = setInterval(() => {
+    const k = Math.min(1, (performance.now() - t0) / 600);
+    if (out && out !== inn) { out.volume = 0.6 * (1 - k); if (k >= 1) out.pause(); }
+    if (inn) inn.volume = v0 + (0.6 - v0) * k;
+    if (k >= 1) clearInterval(MU.fade);
+  }, 30);
+}
+function beatSet(on) {                           // pounding low pulse under the sped-up loop
+  if (!on) { clearInterval(MU.beat); MU.beat = null; return; }
+  const c = AU.ctx; if (!c || MU.beat) return;
+  const step = 60 / (126 * TENSE_RATE) / 2; MU.beatNext = c.currentTime + 0.05; let i = 0;
+  MU.beat = setInterval(() => { while (MU.beatNext < c.currentTime + 0.2) { const d = MU.beatNext - c.currentTime;
+    if (i % 2 === 0) tone('sine', 120, 40, 0.16, 0.32, d, AU.mus); else tone('square', 55, 52, 0.08, 0.05, d, AU.mus);
+    i++; MU.beatNext += step; } }, 50);
+}
+function chipStart() {                           // last resort: the built-in chiptune
+  const c = AU.ctx; if (!c || AU.timer) return;
   AU.next = c.currentTime + 0.05;
   AU.timer = setInterval(() => { while (AU.next < c.currentTime + 0.2) { mstep(AU.step++, AU.next); AU.next += SD; } }, 50);
-  AU.playing = true;
 }
-function musicStop() {
-  if (AU.el) AU.el.pause();
-  if (AU.src) { try { AU.src.stop(); } catch {} AU.src = null; }
-  if (AU.timer) { clearInterval(AU.timer); AU.timer = null; }
-  AU.playing = false;
-}
-// Play a track through an <audio> element; if the browser refuses that, decode it ourselves instead.
-// `quiet` is for the built-in soundtrack: if it cannot play, fall back to the chiptune without an error message.
-async function decodeTrack(file, quiet) {
-  const was = AU.playing;
-  try {
-    AU.buf = await AU.ctx.decodeAudioData(await file.arrayBuffer());
-    musicStop(); if (was || (!quiet && S.state !== 'pause')) musicStart();
-  } catch { AU.failed = !quiet; syncOpts(); }
-}
-function useTrack(src, name, file, quiet) {
-  musicStop(); AU.buf = null; AU.failed = false; AU.pending = null;
-  const el = new Audio(); el.loop = true; el.volume = 0.6; el.preload = 'auto';
-  el.addEventListener('error', () => {
-    if (AU.el !== el) return;
-    AU.el = null; AU.playing = false; AU.name = '';
-    if (!file) return;
-    if (AU.ctx) decodeTrack(file, quiet); else AU.pending = [file, quiet];      // decode once sound is unlocked
-  }, { once: true });
-  el.src = src; AU.el = el; AU.name = name;
-  syncOpts();
-}
+function chipStop() { if (AU.timer) { clearInterval(AU.timer); AU.timer = null; } }
+function musicStart() { musicMode(wantMode(), true); }
+function musicStop() { musicMode(null, true); }
 function syncOpts() {
   document.querySelectorAll('[data-act="sfx"]').forEach(b => { b.lastElementChild.textContent = t(AU.sfxOn ? 'sfxOn' : 'sfxOff'); b.setAttribute('aria-pressed', AU.sfxOn); });
   document.querySelectorAll('[data-act="mus"]').forEach(b => { b.lastElementChild.textContent = t(AU.musOn ? 'musOn' : 'musOff'); b.setAttribute('aria-pressed', AU.musOn); });
@@ -949,7 +976,7 @@ stage.addEventListener('click', e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
   audioInit();
   if (b.dataset.act === 'sfx') { AU.sfxOn = !AU.sfxOn; store.set('sfx', AU.sfxOn); if (AU.sfxOn) SFX.pick(); }
-  else { AU.musOn = !AU.musOn; store.set('mus', AU.musOn); if (!AU.musOn) musicStop(); else if (S.state === 'play' || AU.el || AU.buf) musicStart(); }
+  else { AU.musOn = !AU.musOn; store.set('mus', AU.musOn); musicStart(); }
   syncOpts();
 });
 
@@ -1077,6 +1104,7 @@ function spawn(e) {
 }
 function nextWave() {
   S.wave++; S.queue = buildWave(S.wave); S.waveT = 0; S.inter = 0;
+  if (S.state === 'play') musicMode(wantMode());
   if (S.wave % 5 !== 0) { banner(t('waveBanner', { n: S.wave })); SFX.wave(); }
 }
 function aimShot(e, tx, ty, sp, spread = 0) {
@@ -1429,12 +1457,11 @@ document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click',
 document.querySelectorAll('#hangarScr .arrow').forEach(b => b.addEventListener('click', () => cycle(+b.dataset.dir)));
 $('itemUnlock').addEventListener('click', unlock);
 function toTitle() {
-  musicStop();
   enemies = []; shots = []; eshots = []; parts = []; rings = []; picks = []; pops = []; pulses = [];
   Object.assign(dome, { integrity: 100, shown: 100, flash: 0.4, collapse: null });
   impacts.fill(0); S.state = 'title'; S.hangar = false; S.shake = 0; S.spawnT = 0.6; drag = null;
   revertViews();
-  $('hud').hidden = true; $('banner').hidden = true; $('pulseTip').hidden = true; S.tipT = 0; show('titleScr'); syncMenu();
+  $('hud').hidden = true; $('banner').hidden = true; $('pulseTip').hidden = true; S.tipT = 0; show('titleScr'); syncMenu(); musicStart();
 }
 document.querySelectorAll('[data-menu]').forEach(b => b.addEventListener('click', toTitle));
 
@@ -1448,7 +1475,7 @@ function startGame() {
   Object.assign(player, { tx: W / 2, ty: dome.cy - dome.R - 34, lvl: 1, inv: 1.5, fire: 0.3 });
   player.x = player.tx; player.y = player.ty; pointer = null; drag = null;
   show(null); $('hud').hidden = false; $('pulseTip').hidden = true; S.tipT = 0; S.how = false;
-  musicStop(); musicStart(); nextWave();
+  nextWave(); musicStart();
   try { navigator.wakeLock && navigator.wakeLock.request('screen').catch(() => {}); } catch {}
 }
 function startDying() {
@@ -1458,7 +1485,7 @@ function startDying() {
   musicStop(); SFX.over(); shake(4);
 }
 function gameOver() {
-  S.state = 'over';
+  S.state = 'over'; musicStart();
   const hi = save.hi[P.id] || 0;
   S.newBest = S.score > hi; if (S.newBest) save.hi[P.id] = S.score;
   // cores, the currency that unlocks things: 1 per 50 points, 5 per wave reached, 50 per boss
@@ -1572,14 +1599,13 @@ function frame(ts) {
   draw(); syncHud();
   requestAnimationFrame(frame);
 }
+// browsers only allow sound after a tap or key, so the title music starts on the first one
+function firstSound() { audioInit(); musicStart(); }
+window.addEventListener('pointerdown', firstSound, { once: true });
+window.addEventListener('keydown', firstSound, { once: true });
 function start(data) {
+  musicStart();                                      // works where autoplay is allowed
   initGL(); fit(); initLang();
-  if (MUSIC_SRC) fetch(MUSIC_SRC).then(r => r.ok ? r.blob() : Promise.reject()).then(b => {   // the built-in soundtrack
-    if (AU.el || AU.buf) return;                       // the player already picked their own music
-    const was = AU.playing;
-    useTrack(URL.createObjectURL(b), '', b, true);
-    if (was) musicStart();
-  }).catch(() => {});
   if (reduced) { addImpact(dome.cx - 40, dome.cy - 62, 1); S.t += 0.25; }
   new ResizeObserver(fit).observe(app);
   window.addEventListener('orientationchange', fit);
