@@ -5,3 +5,4 @@ A retro browser space shooter. One static page plus its soundtrack and PWA icons
 ## Deploy on Vercel
 
     npx vercel --prod
+Deploys automatically from the main branch on GitHub.
