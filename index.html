@@ -105,6 +105,20 @@ select.btn{appearance:none;-webkit-appearance:none;border-radius:0;text-align:ce
   font-size:max(13px,calc(var(--u)*6));line-height:1.5;overflow-y:auto;min-height:0}
 .how b{display:block;color:var(--dome);font-weight:700}
 .opts{display:flex;flex-wrap:wrap;gap:calc(var(--u)*3);justify-content:center;max-width:100%}
+.opts.grid{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*4);width:100%;max-width:calc(var(--u)*150)}
+.opts.grid .wide{grid-column:1/-1}
+.btn .ico{width:calc(var(--u)*6);height:calc(var(--u)*6);min-width:12px;min-height:12px;flex:none}
+.btn.sm{gap:calc(var(--u)*3)}
+.btn.ghost{gap:calc(var(--u)*4);display:inline-flex;align-items:center;justify-content:center}
+.btn.ghost .ico{color:var(--dome)}
+.btn.sm[aria-pressed="false"]{color:var(--dim)}
+.btn.sm[aria-pressed="false"] .ico{color:var(--dim)}
+.langwrap{position:relative;padding:0}
+.langwrap select{appearance:none;-webkit-appearance:none;background:transparent;border:0;color:inherit;font:inherit;cursor:pointer;
+  padding:calc(var(--u)*3.5) calc(var(--u)*5) calc(var(--u)*3.5) 0;min-height:36px;text-align:center;text-align-last:center;max-width:100%}
+.langwrap select:focus-visible{outline:none}
+.langwrap:focus-within{outline:2px solid var(--amber);outline-offset:2px}
+.langwrap .ico{margin-left:calc(var(--u)*5)}
 .track{font-size:max(12px,calc(var(--u)*5.4));color:var(--dim);margin:0;max-width:calc(var(--u)*150);overflow-wrap:anywhere}
 .stats{display:grid;grid-template-columns:auto auto;gap:calc(var(--u)*4) calc(var(--u)*10);font-family:var(--font-ui);font-weight:var(--ui-w);font-size:calc(var(--u)*7);
   text-align:left;margin:0;font-variant-numeric:tabular-nums}
@@ -118,7 +132,7 @@ select.btn{appearance:none;-webkit-appearance:none;border-radius:0;text-align:ce
 [data-track]:empty{display:none}
 .btn.has-new{position:relative}
 .btn.has-new::after{content:"";position:absolute;top:calc(var(--u)*-2);right:calc(var(--u)*-2);width:calc(var(--u)*5);height:calc(var(--u)*5);background:var(--amber)}
-.hint{font-size:max(12px,calc(var(--u)*5.6));color:var(--dim);margin:calc(var(--u)*-2) 0 0}
+.hint{font-size:max(12px,calc(var(--u)*5.6));color:var(--dim);margin:calc(var(--u)*-2) 0 calc(var(--u)*4)}
 #hangarScr{padding:0}
 .panel{width:100%;background:var(--scrim);border-bottom:calc(var(--u)*1) solid var(--line);display:flex;flex-direction:column;align-items:center;
   gap:calc(var(--u)*4);padding:calc(var(--u)*7) calc(var(--u)*8) calc(var(--u)*6)}
@@ -195,16 +209,14 @@ select.btn{appearance:none;-webkit-appearance:none;border-radius:0;text-align:ce
       <p class="sub" data-i18n="sub">LAST DOME</p>
       <p class="wallet"><span class="core" role="img" data-i18n-aria="cores" aria-label="Cores"></span><span id="cores">0</span><span class="best" id="bestLine" hidden><span data-i18n="best">BEST</span> <span class="num" id="bestNum"></span></span></p>
       <button class="btn" id="startBtn" type="button" data-i18n="start">START</button>
-      <button class="btn ghost" id="hangarBtn" type="button" data-i18n="hangar">HANGAR</button>
-      <p class="hint" data-i18n="hangarHint">Ships, paint, shield effects and planets</p>
-      <div class="opts">
-        <button class="btn ghost sm" type="button" id="howBtn" data-i18n="howto">How to play</button>
-        <select class="btn ghost sm" id="langSel" aria-label="Language"></select>
-      </div>
-      <div class="opts">
-        <button class="btn ghost sm" type="button" data-act="sfx">Sound on</button>
-        <button class="btn ghost sm" type="button" data-act="mus">Music on</button>
-        <label class="btn ghost sm" for="musicFile" data-i18n="myMusic">Use my music</label>
+      <button class="btn ghost" id="hangarBtn" type="button"><svg class="ico" viewBox="0 0 8 8" aria-hidden="true"><g shape-rendering="crispEdges" fill="currentColor"><rect x="3" y="0" width="1" height="1"/><rect x="4" y="0" width="1" height="1"/><rect x="3" y="1" width="1" height="1"/><rect x="4" y="1" width="1" height="1"/><rect x="2" y="2" width="1" height="1"/><rect x="3" y="2" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="5" y="2" width="1" height="1"/><rect x="2" y="3" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="4" y="3" width="1" height="1"/><rect x="5" y="3" width="1" height="1"/><rect x="1" y="4" width="1" height="1"/><rect x="2" y="4" width="1" height="1"/><rect x="3" y="4" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/><rect x="5" y="4" width="1" height="1"/><rect x="6" y="4" width="1" height="1"/><rect x="0" y="5" width="1" height="1"/><rect x="1" y="5" width="1" height="1"/><rect x="2" y="5" width="1" height="1"/><rect x="3" y="5" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/><rect x="5" y="5" width="1" height="1"/><rect x="6" y="5" width="1" height="1"/><rect x="7" y="5" width="1" height="1"/><rect x="0" y="6" width="1" height="1"/><rect x="2" y="6" width="1" height="1"/><rect x="5" y="6" width="1" height="1"/><rect x="7" y="6" width="1" height="1"/><rect x="2" y="7" width="1" height="1"/><rect x="5" y="7" width="1" height="1"/></g></svg><span data-i18n="hangar">SHIPS</span></button>
+      <p class="hint" data-i18n="hangarHint">Paint, shield effects and planets</p>
+      <div class="opts grid">
+        <button class="btn ghost sm" type="button" id="howBtn"><svg class="ico" viewBox="0 0 8 8" aria-hidden="true"><g shape-rendering="crispEdges" fill="currentColor"><rect x="1" y="0" width="1" height="1"/><rect x="2" y="0" width="1" height="1"/><rect x="3" y="0" width="1" height="1"/><rect x="4" y="0" width="1" height="1"/><rect x="5" y="0" width="1" height="1"/><rect x="6" y="0" width="1" height="1"/><rect x="0" y="1" width="1" height="1"/><rect x="7" y="1" width="1" height="1"/><rect x="0" y="2" width="1" height="1"/><rect x="2" y="2" width="1" height="1"/><rect x="3" y="2" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="5" y="2" width="1" height="1"/><rect x="7" y="2" width="1" height="1"/><rect x="0" y="3" width="1" height="1"/><rect x="7" y="3" width="1" height="1"/><rect x="0" y="4" width="1" height="1"/><rect x="2" y="4" width="1" height="1"/><rect x="3" y="4" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/><rect x="5" y="4" width="1" height="1"/><rect x="7" y="4" width="1" height="1"/><rect x="0" y="5" width="1" height="1"/><rect x="7" y="5" width="1" height="1"/><rect x="0" y="6" width="1" height="1"/><rect x="2" y="6" width="1" height="1"/><rect x="3" y="6" width="1" height="1"/><rect x="4" y="6" width="1" height="1"/><rect x="5" y="6" width="1" height="1"/><rect x="7" y="6" width="1" height="1"/><rect x="1" y="7" width="1" height="1"/><rect x="2" y="7" width="1" height="1"/><rect x="3" y="7" width="1" height="1"/><rect x="4" y="7" width="1" height="1"/><rect x="5" y="7" width="1" height="1"/><rect x="6" y="7" width="1" height="1"/></g></svg><span data-i18n="howto">How to play</span></button>
+        <label class="btn ghost sm langwrap"><svg class="ico" viewBox="0 0 8 8" aria-hidden="true"><g shape-rendering="crispEdges" fill="currentColor"><rect x="2" y="0" width="1" height="1"/><rect x="3" y="0" width="1" height="1"/><rect x="4" y="0" width="1" height="1"/><rect x="5" y="0" width="1" height="1"/><rect x="1" y="1" width="1" height="1"/><rect x="3" y="1" width="1" height="1"/><rect x="4" y="1" width="1" height="1"/><rect x="6" y="1" width="1" height="1"/><rect x="0" y="2" width="1" height="1"/><rect x="3" y="2" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="7" y="2" width="1" height="1"/><rect x="0" y="3" width="1" height="1"/><rect x="1" y="3" width="1" height="1"/><rect x="2" y="3" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="4" y="3" width="1" height="1"/><rect x="5" y="3" width="1" height="1"/><rect x="6" y="3" width="1" height="1"/><rect x="7" y="3" width="1" height="1"/><rect x="0" y="4" width="1" height="1"/><rect x="3" y="4" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/><rect x="7" y="4" width="1" height="1"/><rect x="0" y="5" width="1" height="1"/><rect x="3" y="5" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/><rect x="7" y="5" width="1" height="1"/><rect x="1" y="6" width="1" height="1"/><rect x="3" y="6" width="1" height="1"/><rect x="4" y="6" width="1" height="1"/><rect x="6" y="6" width="1" height="1"/><rect x="2" y="7" width="1" height="1"/><rect x="3" y="7" width="1" height="1"/><rect x="4" y="7" width="1" height="1"/><rect x="5" y="7" width="1" height="1"/></g></svg><select id="langSel" aria-label="Language"></select></label>
+        <button class="btn ghost sm" type="button" data-act="sfx"><svg class="ico" viewBox="0 0 8 8" aria-hidden="true"><g shape-rendering="crispEdges" fill="currentColor"><rect x="4" y="0" width="1" height="1"/><rect x="3" y="1" width="1" height="1"/><rect x="4" y="1" width="1" height="1"/><rect x="7" y="1" width="1" height="1"/><rect x="1" y="2" width="1" height="1"/><rect x="2" y="2" width="1" height="1"/><rect x="3" y="2" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="6" y="2" width="1" height="1"/><rect x="0" y="3" width="1" height="1"/><rect x="1" y="3" width="1" height="1"/><rect x="2" y="3" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="4" y="3" width="1" height="1"/><rect x="6" y="3" width="1" height="1"/><rect x="0" y="4" width="1" height="1"/><rect x="1" y="4" width="1" height="1"/><rect x="2" y="4" width="1" height="1"/><rect x="3" y="4" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/><rect x="6" y="4" width="1" height="1"/><rect x="1" y="5" width="1" height="1"/><rect x="2" y="5" width="1" height="1"/><rect x="3" y="5" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/><rect x="6" y="5" width="1" height="1"/><rect x="3" y="6" width="1" height="1"/><rect x="4" y="6" width="1" height="1"/><rect x="7" y="6" width="1" height="1"/><rect x="4" y="7" width="1" height="1"/></g></svg><span></span></button>
+        <button class="btn ghost sm" type="button" data-act="mus"><svg class="ico" viewBox="0 0 8 8" aria-hidden="true"><g shape-rendering="crispEdges" fill="currentColor"><rect x="3" y="0" width="1" height="1"/><rect x="4" y="0" width="1" height="1"/><rect x="5" y="0" width="1" height="1"/><rect x="6" y="0" width="1" height="1"/><rect x="7" y="0" width="1" height="1"/><rect x="3" y="1" width="1" height="1"/><rect x="7" y="1" width="1" height="1"/><rect x="3" y="2" width="1" height="1"/><rect x="7" y="2" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="7" y="3" width="1" height="1"/><rect x="3" y="4" width="1" height="1"/><rect x="7" y="4" width="1" height="1"/><rect x="1" y="5" width="1" height="1"/><rect x="2" y="5" width="1" height="1"/><rect x="3" y="5" width="1" height="1"/><rect x="5" y="5" width="1" height="1"/><rect x="6" y="5" width="1" height="1"/><rect x="7" y="5" width="1" height="1"/><rect x="0" y="6" width="1" height="1"/><rect x="1" y="6" width="1" height="1"/><rect x="2" y="6" width="1" height="1"/><rect x="3" y="6" width="1" height="1"/><rect x="5" y="6" width="1" height="1"/><rect x="6" y="6" width="1" height="1"/><rect x="7" y="6" width="1" height="1"/><rect x="1" y="7" width="1" height="1"/><rect x="2" y="7" width="1" height="1"/><rect x="5" y="7" width="1" height="1"/><rect x="6" y="7" width="1" height="1"/></g></svg><span></span></button>
+        <label class="btn ghost sm wide" for="musicFile"><svg class="ico" viewBox="0 0 8 8" aria-hidden="true"><g shape-rendering="crispEdges" fill="currentColor"><rect x="3" y="0" width="1" height="1"/><rect x="4" y="0" width="1" height="1"/><rect x="2" y="1" width="1" height="1"/><rect x="3" y="1" width="1" height="1"/><rect x="4" y="1" width="1" height="1"/><rect x="5" y="1" width="1" height="1"/><rect x="1" y="2" width="1" height="1"/><rect x="2" y="2" width="1" height="1"/><rect x="3" y="2" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="5" y="2" width="1" height="1"/><rect x="6" y="2" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="4" y="3" width="1" height="1"/><rect x="3" y="4" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/><rect x="0" y="5" width="1" height="1"/><rect x="3" y="5" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/><rect x="7" y="5" width="1" height="1"/><rect x="0" y="6" width="1" height="1"/><rect x="7" y="6" width="1" height="1"/><rect x="1" y="7" width="1" height="1"/><rect x="2" y="7" width="1" height="1"/><rect x="3" y="7" width="1" height="1"/><rect x="4" y="7" width="1" height="1"/><rect x="5" y="7" width="1" height="1"/><rect x="6" y="7" width="1" height="1"/></g></svg><span data-i18n="myMusic">Use my music</span></label>
       </div>
       <p class="track" data-track></p>
     </div>
@@ -240,10 +252,10 @@ select.btn{appearance:none;-webkit-appearance:none;border-radius:0;text-align:ce
       <h2 data-i18n="paused">PAUSED</h2>
       <button class="btn" id="resumeBtn" type="button" data-i18n="resume">RESUME</button>
       <div class="row"><button class="btn ghost" id="restartBtn" type="button" data-i18n="restart">RESTART</button><button class="btn ghost" type="button" data-menu data-i18n="menu">MENU</button></div>
-      <div class="opts">
-        <button class="btn ghost sm" type="button" data-act="sfx">Sound on</button>
-        <button class="btn ghost sm" type="button" data-act="mus">Music on</button>
-        <label class="btn ghost sm" for="musicFile" data-i18n="myMusic">Use my music</label>
+      <div class="opts grid">
+        <button class="btn ghost sm" type="button" data-act="sfx"><svg class="ico" viewBox="0 0 8 8" aria-hidden="true"><g shape-rendering="crispEdges" fill="currentColor"><rect x="4" y="0" width="1" height="1"/><rect x="3" y="1" width="1" height="1"/><rect x="4" y="1" width="1" height="1"/><rect x="7" y="1" width="1" height="1"/><rect x="1" y="2" width="1" height="1"/><rect x="2" y="2" width="1" height="1"/><rect x="3" y="2" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="6" y="2" width="1" height="1"/><rect x="0" y="3" width="1" height="1"/><rect x="1" y="3" width="1" height="1"/><rect x="2" y="3" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="4" y="3" width="1" height="1"/><rect x="6" y="3" width="1" height="1"/><rect x="0" y="4" width="1" height="1"/><rect x="1" y="4" width="1" height="1"/><rect x="2" y="4" width="1" height="1"/><rect x="3" y="4" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/><rect x="6" y="4" width="1" height="1"/><rect x="1" y="5" width="1" height="1"/><rect x="2" y="5" width="1" height="1"/><rect x="3" y="5" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/><rect x="6" y="5" width="1" height="1"/><rect x="3" y="6" width="1" height="1"/><rect x="4" y="6" width="1" height="1"/><rect x="7" y="6" width="1" height="1"/><rect x="4" y="7" width="1" height="1"/></g></svg><span></span></button>
+        <button class="btn ghost sm" type="button" data-act="mus"><svg class="ico" viewBox="0 0 8 8" aria-hidden="true"><g shape-rendering="crispEdges" fill="currentColor"><rect x="3" y="0" width="1" height="1"/><rect x="4" y="0" width="1" height="1"/><rect x="5" y="0" width="1" height="1"/><rect x="6" y="0" width="1" height="1"/><rect x="7" y="0" width="1" height="1"/><rect x="3" y="1" width="1" height="1"/><rect x="7" y="1" width="1" height="1"/><rect x="3" y="2" width="1" height="1"/><rect x="7" y="2" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="7" y="3" width="1" height="1"/><rect x="3" y="4" width="1" height="1"/><rect x="7" y="4" width="1" height="1"/><rect x="1" y="5" width="1" height="1"/><rect x="2" y="5" width="1" height="1"/><rect x="3" y="5" width="1" height="1"/><rect x="5" y="5" width="1" height="1"/><rect x="6" y="5" width="1" height="1"/><rect x="7" y="5" width="1" height="1"/><rect x="0" y="6" width="1" height="1"/><rect x="1" y="6" width="1" height="1"/><rect x="2" y="6" width="1" height="1"/><rect x="3" y="6" width="1" height="1"/><rect x="5" y="6" width="1" height="1"/><rect x="6" y="6" width="1" height="1"/><rect x="7" y="6" width="1" height="1"/><rect x="1" y="7" width="1" height="1"/><rect x="2" y="7" width="1" height="1"/><rect x="5" y="7" width="1" height="1"/><rect x="6" y="7" width="1" height="1"/></g></svg><span></span></button>
+        <label class="btn ghost sm wide" for="musicFile"><svg class="ico" viewBox="0 0 8 8" aria-hidden="true"><g shape-rendering="crispEdges" fill="currentColor"><rect x="3" y="0" width="1" height="1"/><rect x="4" y="0" width="1" height="1"/><rect x="2" y="1" width="1" height="1"/><rect x="3" y="1" width="1" height="1"/><rect x="4" y="1" width="1" height="1"/><rect x="5" y="1" width="1" height="1"/><rect x="1" y="2" width="1" height="1"/><rect x="2" y="2" width="1" height="1"/><rect x="3" y="2" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="5" y="2" width="1" height="1"/><rect x="6" y="2" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="4" y="3" width="1" height="1"/><rect x="3" y="4" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/><rect x="0" y="5" width="1" height="1"/><rect x="3" y="5" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/><rect x="7" y="5" width="1" height="1"/><rect x="0" y="6" width="1" height="1"/><rect x="7" y="6" width="1" height="1"/><rect x="1" y="7" width="1" height="1"/><rect x="2" y="7" width="1" height="1"/><rect x="3" y="7" width="1" height="1"/><rect x="4" y="7" width="1" height="1"/><rect x="5" y="7" width="1" height="1"/><rect x="6" y="7" width="1" height="1"/></g></svg><span data-i18n="myMusic">Use my music</span></label>
       </div>
       <p class="track" data-track></p>
     </div>
@@ -292,7 +304,7 @@ const store = {
 const LANGS = [['en', 'English'], ['zh-Hant', '繁體中文'], ['zh-Hans', '简体中文'], ['ja', '日本語'], ['ko', '한국어'], ['es', 'Español']];
 const T = {
   en: {
-    sub: 'LAST DOME', start: 'START', hangar: 'HANGAR', hangarHint: 'Ships, paint, shield effects and planets', howto: 'How to play',
+    sub: 'LAST DOME', start: 'START', hangar: 'SHIPS', hangarHint: 'Paint, shield effects and planets', howto: 'How to play',
     sfxOn: 'Sound on', sfxOff: 'Sound off', musOn: 'Music on', musOff: 'Music off', myMusic: 'Use my music', best: 'BEST',
     score: 'SCORE', wave: 'WAVE', domeLab: 'DOME', pulse: 'BLAST', waveBanner: 'WAVE {n}', warning: 'WARNING', pulseReady: 'BLAST READY!',
     paused: 'PAUSED', resume: 'RESUME', restart: 'RESTART', menu: 'MENU', gameOver: 'GAME OVER', domeLost: 'The dome has fallen.',
@@ -322,7 +334,7 @@ const T = {
     },
   },
   'zh-Hant': {
-    sub: '最後的護盾', start: '開始', hangar: '機庫', hangarHint: '換飛機、塗裝、護盾特效和星球', howto: '怎麼玩',
+    sub: '最後的護盾', start: '開始', hangar: '戰機', hangarHint: '塗裝、護盾特效和星球', howto: '怎麼玩',
     sfxOn: '音效 開', sfxOff: '音效 關', musOn: '音樂 開', musOff: '音樂 關', myMusic: '換成我的音樂', best: '最高分',
     score: '分數', wave: '波次', domeLab: '護盾', pulse: '衝擊波', waveBanner: '第 {n} 波', warning: '警告', pulseReady: '衝擊波已充滿！',
     paused: '暫停', resume: '繼續', restart: '重新開始', menu: '主選單', gameOver: '遊戲結束', domeLost: '護盾失守。',
@@ -352,7 +364,7 @@ const T = {
     },
   },
   'zh-Hans': {
-    sub: '最后的护盾', start: '开始', hangar: '机库', hangarHint: '换飞机、涂装、护盾特效和星球', howto: '怎么玩',
+    sub: '最后的护盾', start: '开始', hangar: '战机', hangarHint: '涂装、护盾特效和星球', howto: '怎么玩',
     sfxOn: '音效 开', sfxOff: '音效 关', musOn: '音乐 开', musOff: '音乐 关', myMusic: '换成我的音乐', best: '最高分',
     score: '分数', wave: '波次', domeLab: '护盾', pulse: '冲击波', waveBanner: '第 {n} 波', warning: '警告', pulseReady: '冲击波已充满！',
     paused: '暂停', resume: '继续', restart: '重新开始', menu: '主菜单', gameOver: '游戏结束', domeLost: '护盾失守。',
@@ -382,7 +394,7 @@ const T = {
     },
   },
   ja: {
-    sub: '最後のドーム', start: 'スタート', hangar: '格納庫', hangarHint: '機体・塗装・シールド演出・惑星を変更', howto: '遊び方',
+    sub: '最後のドーム', start: 'スタート', hangar: '機体', hangarHint: '塗装・シールド演出・惑星を変更', howto: '遊び方',
     sfxOn: '効果音 オン', sfxOff: '効果音 オフ', musOn: '音楽 オン', musOff: '音楽 オフ', myMusic: '自分の曲を使う', best: 'ベスト',
     score: 'スコア', wave: 'ウェーブ', domeLab: 'ドーム', pulse: '衝撃波', waveBanner: 'ウェーブ {n}', warning: '警告', pulseReady: '衝撃波チャージ完了！',
     paused: 'ポーズ', resume: '再開', restart: 'やり直す', menu: 'メニュー', gameOver: 'ゲームオーバー', domeLost: 'ドームが破られた。',
@@ -412,7 +424,7 @@ const T = {
     },
   },
   ko: {
-    sub: '마지막 돔', start: '시작', hangar: '격납고', hangarHint: '기체, 도색, 실드 효과, 행성 변경', howto: '게임 방법',
+    sub: '마지막 돔', start: '시작', hangar: '기체', hangarHint: '도색, 실드 효과, 행성 변경', howto: '게임 방법',
     sfxOn: '효과음 켬', sfxOff: '효과음 끔', musOn: '음악 켬', musOff: '음악 끔', myMusic: '내 음악 사용', best: '최고 점수',
     score: '점수', wave: '웨이브', domeLab: '돔', pulse: '충격파', waveBanner: '웨이브 {n}', warning: '경고', pulseReady: '충격파 준비 완료!',
     paused: '일시정지', resume: '계속', restart: '다시 시작', menu: '메뉴', gameOver: '게임 오버', domeLost: '돔이 무너졌습니다.',
@@ -442,7 +454,7 @@ const T = {
     },
   },
   es: {
-    sub: 'EL ÚLTIMO DOMO', start: 'JUGAR', hangar: 'HANGAR', hangarHint: 'Naves, pintura, efectos de escudo y planetas', howto: 'Cómo jugar',
+    sub: 'EL ÚLTIMO DOMO', start: 'JUGAR', hangar: 'SHIPS', hangarHint: 'Pintura, efectos de escudo y planetas', howto: 'Cómo jugar',
     sfxOn: 'Sonido sí', sfxOff: 'Sonido no', musOn: 'Música sí', musOff: 'Música no', myMusic: 'Usar mi música', best: 'RÉCORD',
     score: 'PUNTOS', wave: 'OLEADA', domeLab: 'DOMO', pulse: 'ONDA', waveBanner: 'OLEADA {n}', warning: 'ALERTA', pulseReady: '¡ONDA LISTA!',
     paused: 'PAUSA', resume: 'SEGUIR', restart: 'REINICIAR', menu: 'MENÚ', gameOver: 'FIN DEL JUEGO', domeLost: 'El domo ha caído.',
@@ -939,8 +951,8 @@ $('musicFile').addEventListener('change', e => {
   if (S.state !== 'pause') musicStart();
 });
 function syncOpts() {
-  document.querySelectorAll('[data-act="sfx"]').forEach(b => { b.textContent = t(AU.sfxOn ? 'sfxOn' : 'sfxOff'); b.setAttribute('aria-pressed', AU.sfxOn); });
-  document.querySelectorAll('[data-act="mus"]').forEach(b => { b.textContent = t(AU.musOn ? 'musOn' : 'musOff'); b.setAttribute('aria-pressed', AU.musOn); });
+  document.querySelectorAll('[data-act="sfx"]').forEach(b => { b.lastElementChild.textContent = t(AU.sfxOn ? 'sfxOn' : 'sfxOff'); b.setAttribute('aria-pressed', AU.sfxOn); });
+  document.querySelectorAll('[data-act="mus"]').forEach(b => { b.lastElementChild.textContent = t(AU.musOn ? 'musOn' : 'musOff'); b.setAttribute('aria-pressed', AU.musOn); });
   document.querySelectorAll('[data-track]').forEach(p => { p.textContent = AU.failed ? t('trackError') : AU.name; });
 }
 stage.addEventListener('click', e => {
