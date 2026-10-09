@@ -904,9 +904,9 @@ function mstep(s, t) {
 }
 // Soundtrack: a "ready" loop on the title and hangar, the main loop in play, and a tense mix for
 // boss waves and the late game. Plain <audio> elements, so it also plays when opened from file://.
-// Set TRACKS.boss to a file (e.g. 'boss.mp3') to give boss waves their own track; until then the
-// tense mix is the main loop sped up with a pounding pulse underneath.
-const TRACKS = { ready: 'ready.mp3', main: 'music.mp3', boss: null };
+// Boss waves and the late game play boss.mp3. If it cannot load, the tense mix falls back to the
+// main loop sped up with a pounding pulse underneath.
+const TRACKS = { ready: 'ready.mp3', main: 'music.mp3', boss: 'boss.mp3' };
 const INTENSE_FROM = 10;                         // from this wave on, every wave gets the tense mix
 const TENSE_RATE = 1.12;
 const MU = { els: {}, ok: {}, mode: null, cur: null, fade: null, beat: null, beatNext: 0 };
@@ -935,7 +935,7 @@ function musicMode(mode, force) {
   const tense = mode === 'boss' && key === 'main';
   if (key !== MU.cur) {
     const old = MU.cur && MU.els[MU.cur];
-    if (key) { const el = MU.els[key]; if (key === 'main' && mode === 'main' && MU.cur !== 'main') el.currentTime = 0; setRate(el, rate); el.play().catch(() => {}); }
+    if (key) { const el = MU.els[key]; if ((key === 'main' && mode === 'main') || key === 'boss') el.currentTime = 0; setRate(el, rate); el.play().catch(() => {}); }
     MU.cur = key; fadeTo(old, key && MU.els[key]);
   } else if (key) { setRate(MU.els[key], rate); if (MU.els[key].paused) MU.els[key].play().catch(() => {}); fadeTo(null, MU.els[key]); }
   chipStop(); if (mode && AU.musOn && !key && mode !== 'ready') chipStart();
