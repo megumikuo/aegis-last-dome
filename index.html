@@ -44,7 +44,7 @@ img{max-width:100%}
 *{box-sizing:border-box}
 html,body{height:100%}
 body{background:var(--void);color:var(--ink);font-family:var(--font-text);overflow:hidden;overscroll-behavior:none}
-.app{height:100%;display:flex;align-items:center;justify-content:center}
+.app{height:100%;height:100dvh;display:flex;align-items:center;justify-content:center}
 .stage{--font-ui:var(--font-arcade);--ui-w:400;position:relative;overflow:hidden;background:var(--void);box-shadow:0 0 0 1px var(--line);
   touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
 .layers{position:absolute;inset:0;will-change:transform}
@@ -156,6 +156,8 @@ select.btn{appearance:none;-webkit-appearance:none;border-radius:0;text-align:ce
 .row{display:flex;flex-wrap:wrap;gap:calc(var(--u)*4);justify-content:center}
 /* Numbers and symbols stay in the arcade face in every language; words follow the language's own script */
 .num{font-family:var(--font-arcade);font-weight:400}
+.pausebtn{display:inline-flex;align-items:center;justify-content:center}
+.pausebtn .bars{display:block;width:calc(var(--u)*7);height:calc(var(--u)*7);background:linear-gradient(to right,currentColor 0 calc(var(--u)*2.5),transparent calc(var(--u)*2.5) calc(var(--u)*4.5),currentColor calc(var(--u)*4.5))}
 .stage:not(.cjk) h2{text-transform:uppercase}
 .stage.cjk{--font-ui:var(--font-text);--ui-w:700}
 .stage.cjk .hud .lab{font-size:max(11px,calc(var(--u)*5.4));letter-spacing:0}
@@ -180,7 +182,7 @@ select.btn{appearance:none;-webkit-appearance:none;border-radius:0;text-align:ce
       <div class="hud-top">
         <div><span class="lab" data-i18n="score">SCORE</span><span class="num" id="score">000000</span><span class="chain num" id="chain"></span></div>
         <div class="mid"><span class="lab" data-i18n="wave">WAVE</span><span class="num" id="wave">1</span></div>
-        <button class="iconbtn num" id="pauseBtn" type="button" data-i18n-aria="pause" aria-label="Pause">II</button>
+        <button class="iconbtn pausebtn" id="pauseBtn" type="button" data-i18n-aria="pause" aria-label="Pause"><span class="bars"></span></button>
       </div>
       <div class="domebar" aria-hidden="true"><span class="lab" data-i18n="domeLab">DOME</span><div class="segs" id="segs"></div></div>
       <p class="pulsetip" id="pulseTip" data-i18n="pulseReady" hidden>BLAST READY!</p>
@@ -1579,6 +1581,8 @@ function start(data) {
   if (reduced) { addImpact(dome.cx - 40, dome.cy - 62, 1); S.t += 0.25; }
   new ResizeObserver(fit).observe(app);
   window.addEventListener('orientationchange', fit);
+  window.addEventListener('resize', fit);
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', fit);
   requestAnimationFrame(frame);
 }
 const hot = window.claude && window.claude.hot;
