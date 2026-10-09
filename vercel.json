@@ -1,5 +1,4 @@
 {
-  "trailingSlash": true,
   "headers": [
     { "source": "/(.*)\\.(mp3|png|jpg|webmanifest)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }] }
   ]
