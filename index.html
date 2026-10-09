@@ -935,21 +935,24 @@ function musicMode(mode, force) {
   const [key, rate] = mode && AU.musOn ? pickTrack(mode) : [null, 1];
   const tense = (mode === 'boss' || mode === 'late') && key === 'main';
   if (key !== MU.cur) {
-    const old = MU.cur && MU.els[MU.cur];
     if (key) { const el = MU.els[key]; if ((key === 'main' && mode === 'main') || key === 'boss' || key === 'boss2') el.currentTime = 0; setRate(el, rate); el.play().catch(() => {}); }
-    MU.cur = key; fadeTo(old, key && MU.els[key]);
-  } else if (key) { setRate(MU.els[key], rate); if (MU.els[key].paused) MU.els[key].play().catch(() => {}); fadeTo(null, MU.els[key]); }
+    MU.cur = key; fadeTo();
+  } else if (key) { setRate(MU.els[key], rate); if (MU.els[key].paused) MU.els[key].play().catch(() => {}); fadeTo(); }
   chipStop(); if (mode && AU.musOn && !key && mode !== 'ready') chipStart();
   beatSet(tense && AU.musOn);
   AU.playing = !!mode && AU.musOn;
 }
-function fadeTo(out, inn) {                      // quick crossfade between loops
-  clearInterval(MU.fade); const t0 = performance.now(), v0 = inn ? inn.volume : 0;
+function fadeTo() {                             // fade the current loop in and every other loop out
+  clearInterval(MU.fade); let last = performance.now();
   MU.fade = setInterval(() => {
-    const k = Math.min(1, (performance.now() - t0) / 600);
-    if (out && out !== inn) { out.volume = 0.6 * (1 - k); if (k >= 1) out.pause(); }
-    if (inn) inn.volume = v0 + (0.6 - v0) * k;
-    if (k >= 1) clearInterval(MU.fade);
+    const now = performance.now(), step = (now - last) / 600; last = now; let busy = false;
+    for (const k in MU.els) {
+      const el = MU.els[k], target = k === MU.cur ? 0.6 : 0;
+      el.volume = target > el.volume ? Math.min(target, el.volume + step) : Math.max(target, el.volume - step);
+      if (el.volume !== target) busy = true;
+      else if (!target && !el.paused) el.pause();
+    }
+    if (!busy) clearInterval(MU.fade);
   }, 30);
 }
 function beatSet(on) {                           // pounding low pulse under the sped-up loop
