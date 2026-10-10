@@ -1,5 +1,5 @@
 {
   "headers": [
-    { "source": "/(.*)\\.(mp3|png|jpg|webmanifest)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }] }
+    { "source": "/(.*)\\.(mp3|mp4|png|jpg|webmanifest)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }] }
   ]
 }
